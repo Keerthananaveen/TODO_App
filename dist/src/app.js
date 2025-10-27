@@ -1,7 +1,10 @@
 import express from "express";
 import authRoutes from "./routes/authR.js";
+import router from "./routes/todoR.js";
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/api/todo", router);
 app.use("/api/auth", authRoutes);
 import { errorHandler } from "./middleware/error.js";
 app.use(errorHandler);

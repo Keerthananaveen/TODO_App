@@ -1,6 +1,8 @@
 import express from "express";
 import * as TodoController from "../controllers/todoC.js";
+import { authenticate } from "../middleware/authM.js";
 const router = express.Router();
+router.use(authenticate);
 router.get("/", TodoController.getTodos);
 router.get("/:id", TodoController.getTodoById);
 router.post("/", TodoController.createTodo);
