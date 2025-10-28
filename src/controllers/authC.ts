@@ -8,12 +8,21 @@ const prisma = new PrismaClient();
 
 export const signup = async (req: AuthRequest, res: Response) => {
   try {
-    const { username, email, password } = req.body||{};
+    const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+      });
+    }
+  const existing = await prisma.user.findUnique({ where: { username } });
+  if (existing) {
+    return res.status(409).json({ message: "Username already taken" });
+  }
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
@@ -24,10 +33,10 @@ export const signup = async (req: AuthRequest, res: Response) => {
       data: { username, email, password: hashed },
     });
 
-    const token = generateToken(user.id);
+    // const token = generateToken(user.id);
 
     res.status(201).json({
-      token,
+      // token,
       user: {
         id: user.id,
         username: user.username,
@@ -42,7 +51,7 @@ export const signup = async (req: AuthRequest, res: Response) => {
 
 export const login = async (req: AuthRequest, res: Response) => {
   try {
-    const { email, password } = req.body||{};
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });

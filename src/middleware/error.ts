@@ -11,4 +11,11 @@ export const errorHandler = (
   res.status(statusCode).json({
     message: err.message || "Internal Server Error",
   });
+  if(statusCode===401){
+    message:"You are unauthorized so login again";
+  }
+  else if(statusCode===403){
+    message:"You are forbidden";
+  }
 };
+ 
