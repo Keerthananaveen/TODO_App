@@ -46,7 +46,14 @@ export const updateTodo = async (
 };
 
 export const deleteTodo = async (userId: number, id: string) => {  
-  return prisma.todo.delete({
-    where: { id },  
+  return prisma.todo.update({
+    where: {
+      id,
+      userId, 
+    },
+    data: {
+      deleted: true,
+      deletedAt: new Date(),
+    },
   });
 };
